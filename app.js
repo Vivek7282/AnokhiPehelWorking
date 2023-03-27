@@ -32,6 +32,26 @@ app.get("/events", function(req, res){
 app.get("/navodaya", function(req, res){
     res.render("navodaya");
 })
+app.get("/location", function(req, res){
+    res.render("location");
+})
+app.get("/cordinator", function(req, res){
+    res.render("cordinator");
+})
+
+app.get("/mentorLogin", function(req, res){
+    res.render("mentorLogin");
+})
+
+app.get("/adminlogin", function(req, res){
+    res.render("adminlogin");
+})
+app.get("/locationcordi", function(req, res){
+    res.render("locationcordi");
+})
+app.get("/classcordi", function(req, res){
+    res.render("classcordi");
+})
 
 
 
