@@ -9,10 +9,11 @@ const userRecordSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   class: {
-    type: string,
+    type: String,
     required: true
   }
 });

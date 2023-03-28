@@ -3,6 +3,12 @@ const bodyParser= require("body-parser")
 const mongoose = require('mongoose');
 const config = require('./config');
 const app= express();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const flash = require('connect-flash');
+const { MentorLogin } = require('./views/user');
+app.use(flash());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 // app.use(express.static(__dirname + 'views/assets'));
 app.use(express.static('assets'))
@@ -35,9 +41,51 @@ app.get("/navodaya", function(req, res){
 app.get("/location", function(req, res){
     res.render("location");
 })
-app.get("/cordinator", function(req, res){
-    res.render("cordinator");
-})
+// app.get("/cordinator", function(req, res){
+//     res.render("cordinator");
+// })
+
+
+
+// to fetch class cordinator
+const { MongoClient } = require('mongodb');
+const uri = 'mongodb://localhost:27017/Anokhi_Pehel_Working';
+
+const client = new MongoClient(uri, { useUnifiedTopology: true });
+client.connect((err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  
+    // Code to fetch data and render EJS template goes here
+  });
+  
+const db = client.db('Anokhi_Pehel_Working');
+const collection = db.collection('classCordinator');
+collection.find({}).toArray((err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  
+    // Code to render EJS template with data goes here
+  });
+app.get('/cordinator', (req, res) => {
+    collection.find({}).toArray((err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+  
+      res.render('cordinator', { data });
+    });
+  });
+  
+
+
+
+
 
 app.get("/mentorLogin", function(req, res){
     res.render("mentorLogin");
@@ -53,6 +101,32 @@ app.get("/classcordi", function(req, res){
     res.render("classcordi");
 })
 
+app.post('/mentorLogin', (req, res) => {
+    const { email, password } = req.body;
+  
+    mongoose.connect(url, (err, client) => {
+      if (err) throw err;
+  
+      const db = client.db("Anokhi_Pehel_Working");
+      const mentorsCollection = db.collection('mentorLogin');
+  
+      mentorsCollection.findOne({ email }, (err, mentor) => {
+        if (err) throw err;
+  
+        if (!mentor) {
+          req.flash('error', 'Invalid email or password');
+          res.redirect('/mentor/login');
+        } else if (mentor.password !== password) {
+          req.flash('error', 'Invalid email or password');
+          res.redirect('/mentorLogin');
+        } else {
+          req.session.user = mentor;
+          res.redirect('/');
+        }
+      });
+    });
+  });
+  
 
 
 app.listen(4050, function(){
