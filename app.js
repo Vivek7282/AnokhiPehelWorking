@@ -41,6 +41,13 @@ app.get("/navodaya", function(req, res){
 app.get("/location", function(req, res){
     res.render("location");
 })
+
+
+
+
+
+
+
 // app.get("/cordinator", function(req, res){
 //     res.render("cordinator");
 // })
@@ -82,6 +89,26 @@ app.get('/cordinator', (req, res) => {
     });
   });
   
+
+
+const collection1 = db.collection('student');
+collection1.find({}).toArray((err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+});
+  app.get('/studentsnavodaya', (req, res) => {
+    collection1.find({}).toArray((err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        res.render('student', { data, class: 'navodaya' });
+ 
+        // res.render('student', { data });
+      });
+    });
 
 
 
