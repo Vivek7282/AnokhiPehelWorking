@@ -110,8 +110,46 @@ collection1.find({}).toArray((err, data) => {
       });
     });
 
+    const collection4 = db.collection('student');
+    collection4.find({}).toArray((err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+    });
+    app.get('/chilla', (req, res) => {
+        collection4.find({}).toArray((err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            res.render('studentLocation', { data, place: 'Chilla' });
+     
+            // res.render('student', { data });
+          });
+        });
 
 
+//to get all student
+const collection3 = db.collection('student');
+collection3.find({}).toArray((err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+});
+
+app.get('/students', (req, res) => {
+    collection3.find({}).toArray((err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        res.render('studentAll',{data} );
+ 
+        // res.render('student', { data });
+      });
+    });
 
 
 app.get("/mentorLogin", function(req, res){
