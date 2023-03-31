@@ -166,31 +166,50 @@ app.get("/classcordi", function(req, res){
     res.render("classcordi");
 })
 
-app.post('/mentorLogin', (req, res) => {
-    const { email, password } = req.body;
+//login varification navodaya 
+app.get("/navodayamentor", function(req, res){
+    res.render("navodayamentor");
+})
+app.get("/attendencenavodaya", function(req, res){
+    res.render("attendencenavodaya");
+})
+
+const mentorLoginSchema = new mongoose.Schema({
+    name : String,
+    email: String,
+    password: String,
+    class : String
+  });
   
-    mongoose.connect(url, (err, client) => {
-      if (err) throw err;
+  const MentorLogin1 = mongoose.model('MentorLogin1', mentorLoginSchema);
   
-      const db = client.db("Anokhi_Pehel_Working");
-      const mentorsCollection = db.collection('mentorLogin');
-  
-      mentorsCollection.findOne({ email }, (err, mentor) => {
-        if (err) throw err;
-  
-        if (!mentor) {
-          req.flash('error', 'Invalid email or password');
-          res.redirect('/mentor/login');
-        } else if (mentor.password !== password) {
-          req.flash('error', 'Invalid email or password');
-          res.redirect('/mentorLogin');
-        } else {
-          req.session.user = mentor;
-          res.redirect('/');
-        }
-      });
+  app.post('/mentorLogin', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+   console.log(email + password);
+    MentorLogin1.findOne({ email: email, password: password }, (err, mentor) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else if (!mentor) {
+        res.status(401).send('Invalid Email or Password');
+      } else {
+        // Login Successful, redirect to Dashboard
+        if(MentorLogin1.findOne({class : "navodaya"}))
+        res.redirect('/navodayamentor');
+      }
     });
   });
+  
+
+
+
+
+
+
+
+
+
   
 
 
