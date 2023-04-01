@@ -243,6 +243,7 @@ app.get('/attendancenavodaya', async (req, res) => {
 
   app.post('/attendance', async (req, res) => {
     const present = req.body.present;
+    const names = req.body.name;
     if (!Array.isArray(present)) {
       return res.status(400).send('Invalid data format');
     }
@@ -257,6 +258,7 @@ app.get('/attendancenavodaya', async (req, res) => {
           studentId: present[i],
           present: true,
           class: 'navodaya',
+          name : names[i],
           date: date
         });
         await attendance.save();
@@ -292,18 +294,19 @@ app.get('/attendance-sheetnavodaya', async (req, res) => {
           $gte: startDate,
           $lte: endDate,
         },
-      }).populate('studentId');
+      }).populate('studentId','name');
   
       const attendanceSheet = [];
   
       for (const attendance of attendanceData) {
-        const { studentId, present } = attendance;
-        const { name } = studentId;
+        const { studentId, present,name } = attendance;
+        
+        console.log(name);
         const date = attendance.date.toLocaleDateString('en-US');
   
         attendanceSheet.push({ name, date, present });
       }
-  
+      console.log(attendanceSheet); 
       res.render('attendance-sheetnavo', { attendanceSheet });
     } catch (error) {
       console.error(error);

@@ -16,6 +16,7 @@
         <% for (let i = 0; i < students.length; i++) { %>
         <div>
           <input type="hidden" name="studentId" value="<%= students[i]._id %>">
+          <input type="hidden" name="name" value="<%= students[i].name %>">
           <input type="checkbox" name="present" value="<%= students[i]._id %>">
           <label><%= students[i].name %></label>
         </div>
