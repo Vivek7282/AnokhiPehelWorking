@@ -1,0 +1,45 @@
+<%- include('header'); -%>
+
+
+
+
+<!-- ======= Team Section ======= -->
+<section id="team" class="team">
+    <div class="container" data-aos="fade-up">
+
+      <div class="section-header">
+        <h2>Attendance Sheet</h2>
+        <p>""</p>
+      </div>
+      
+      <form method="post" action="/attendance">
+        <% for (let i = 0; i < students.length; i++) { %>
+        <div>
+          <input type="hidden" name="studentId" value="<%= students[i]._id %>">
+          <input type="checkbox" name="present" value="<%= students[i]._id %>">
+          <label><%= students[i].name %></label>
+        </div>
+        <% } %>
+        <button type="submit">Submit</button>
+      </form>
+      
+      
+      
+
+
+
+
+
+      
+
+        
+        
+      </div>
+
+    </div>
+  </section><!-- End Team Section -->
+
+
+
+
+<%- include('footer'); -%>

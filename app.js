@@ -64,8 +64,7 @@ client.connect((err) => {
       console.error(err);
       return;
     }
-  
-    // Code to fetch data and render EJS template goes here
+
   });
   
 const db = client.db('Anokhi_Pehel_Working');
@@ -75,8 +74,6 @@ collection.find({}).toArray((err, data) => {
       console.error(err);
       return;
     }
-  
-    // Code to render EJS template with data goes here
   });
 app.get('/cordinator', (req, res) => {
     collection.find({}).toArray((err, data) => {
@@ -90,6 +87,13 @@ app.get('/cordinator', (req, res) => {
   });
   
 
+
+
+
+
+
+
+// to get all students of navodaya
 
 const collection1 = db.collection('student');
 collection1.find({}).toArray((err, data) => {
@@ -105,10 +109,15 @@ collection1.find({}).toArray((err, data) => {
           return;
         }
         res.render('student', { data, class: 'navodaya' });
- 
-        // res.render('student', { data });
+
       });
     });
+
+
+
+
+
+    // To get all students of chilla
 
     const collection4 = db.collection('student');
     collection4.find({}).toArray((err, data) => {
@@ -124,10 +133,15 @@ collection1.find({}).toArray((err, data) => {
               return;
             }
             res.render('studentLocation', { data, place: 'Chilla' });
-     
-            // res.render('student', { data });
           });
         });
+
+
+
+
+
+
+
 
 
 //to get all student
@@ -138,7 +152,6 @@ collection3.find({}).toArray((err, data) => {
       return;
     }
 });
-
 app.get('/students', (req, res) => {
     collection3.find({}).toArray((err, data) => {
         if (err) {
@@ -146,10 +159,16 @@ app.get('/students', (req, res) => {
           return;
         }
         res.render('studentAll',{data} );
- 
-        // res.render('student', { data });
       });
     });
+// To get all student end
+
+
+
+
+
+
+
 
 
 app.get("/mentorLogin", function(req, res){
@@ -166,13 +185,15 @@ app.get("/classcordi", function(req, res){
     res.render("classcordi");
 })
 
+
+
+
+
 //login varification navodaya 
 app.get("/navodayamentor", function(req, res){
     res.render("navodayamentor");
 })
-app.get("/attendencenavodaya", function(req, res){
-    res.render("attendencenavodaya");
-})
+
 
 const mentorLoginSchema = new mongoose.Schema({
     name : String,
@@ -194,23 +215,127 @@ const mentorLoginSchema = new mongoose.Schema({
       } else if (!mentor) {
         res.status(401).send('Invalid Email or Password');
       } else {
-        // Login Successful, redirect to Dashboard
         if(MentorLogin1.findOne({class : "navodaya"}))
         res.redirect('/navodayamentor');
       }
     });
   });
   
+// login varification end navodaya
+
+
+
+  // attendance Navodaya
+  const Student = require('./views/student.js');
+ const Attendance = require('./views/attendance.js');
+ const router = express.Router();
+
+app.get('/attendancenavodaya', async (req, res) => {
+    try {
+      const students = await Student.find({ class: 'navodaya' });
+      res.render('attendancenavodaya', { students });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal server error');
+    }
+  });
+  
+
+  app.post('/attendance', async (req, res) => {
+    const present = req.body.present;
+    if (!Array.isArray(present)) {
+      return res.status(400).send('Invalid data format');
+    }
+    const date = new Date();
+    date.setHours(0, 0, 0, 0); 
+    for (let i = 0; i < present.length; i++) {
+      const existingAttendance = await Attendance.findOne({ studentId: present[i], date: date });
+      if (existingAttendance) {
+        console.log(`Attendance record already exists for student with ID ${present[i]} on ${date.toDateString()}`);
+      } else {
+        const attendance = new Attendance({
+          studentId: present[i],
+          present: true,
+          class: 'navodaya',
+          date: date
+        });
+        await attendance.save();
+        console.log(`Attendance recorded for student with ID ${present[i]} on ${date.toDateString()}`);
+      }
+    }
+    res.redirect('navodayamentor');
+  });
+  
+  
+// attendance navodaya end
 
 
 
 
 
+// for  fetching attendance of navodaya
 
-
-
+app.get('/attendance-sheetnavodaya', async (req, res) => {
+    const month = '2023-04';
+    if (!month) {
+      return res.status(400).send('Month parameter is missing');
+    }
+  
+    const startDate = new Date(month);
+    startDate.setDate(1);
+    const endDate = new Date(month);
+    endDate.setMonth(endDate.getMonth() + 1, 0);
+  
+    try {
+      const attendanceData = await Attendance.find({
+        date: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      }).populate('studentId');
+  
+      const attendanceSheet = [];
+  
+      for (const attendance of attendanceData) {
+        const { studentId, present } = attendance;
+        const { name } = studentId;
+        const date = attendance.date.toLocaleDateString('en-US');
+  
+        attendanceSheet.push({ name, date, present });
+      }
+  
+      res.render('attendance-sheetnavo', { attendanceSheet });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Something went wrong');
+    }
+  });
 
   
+  //attendance navodaya end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(4050, function(){

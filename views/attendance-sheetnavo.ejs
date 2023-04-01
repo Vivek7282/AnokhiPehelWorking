@@ -1,0 +1,54 @@
+<%- include('header'); -%>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Sheet</title>
+  <style>
+    /* Add your custom styles here */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Attendance Sheet</h1>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Present</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const attendance of attendanceSheet) { %>
+        <tr>
+          <td><%= attendance.name %></td>
+          <td><%= attendance.date %></td>
+          <td><%= attendance.present ? 'Yes' : 'No' %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+</html>
+
+
+
+<%- include('footer'); -%>
