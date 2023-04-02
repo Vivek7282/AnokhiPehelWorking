@@ -225,11 +225,140 @@ const mentorLoginSchema = new mongoose.Schema({
 
 
 
-  // attendance Navodaya
-  const Student = require('./views/student.js');
- const Attendance = require('./views/attendance.js');
- const router = express.Router();
+// chilla location cordinator login
 
+
+
+
+app.get("/chilladashboard", function(req, res){
+    res.render("chilladashboard");
+})
+
+
+const LocationcordiSchema = new mongoose.Schema({
+    name : String,
+    email: String,
+    password: String,
+  });
+  
+  const locationcordi = mongoose.model('Locationcordi', LocationcordiSchema);
+
+  app.post('/locationcordi', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+   console.log(email + password);
+    MentorLogin1.findOne({ email: email, password: password }, (err, mentor) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else if (!mentor) {
+        res.status(401).send('Invalid Email or Password');
+      } else {
+        if(locationcordi.findOne({location : "Chilla"}))
+        res.redirect('/chilladashboard');
+      }
+    });
+  });
+  
+// login varification chilla end 
+
+
+
+
+
+
+// admin login
+
+app.get("/admindashboard", function(req, res){
+    res.render("admindashboard");
+})
+const AdminSchema = new mongoose.Schema({
+    name : String,
+    email: String,
+    password: String,
+  });
+  
+  const admin = mongoose.model('Admin', LocationcordiSchema);
+
+  app.post('/adminlogin', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+   console.log(email + password);
+    MentorLogin1.findOne({ email: email, password: password }, (err, mentor) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else if (!mentor) {
+        res.status(401).send('Invalid Email or Password');
+      } else {
+       
+        res.redirect('/admindashboard');
+      }
+    });
+  });
+
+// admin login end
+
+
+
+
+//attendance chilla
+
+
+
+// attendance Navodaya
+const Student = require('./views/student.js');
+const AttendanceLocation = require('./views/attendancelocation.js');
+const router = express.Router();
+
+app.get('/attendancechilla', async (req, res) => {
+   try {
+     const students = await Student.find({ place: 'Chilla' });
+     res.render('attendancechilla', { students });
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('Internal server error');
+   }
+ });
+ 
+
+ app.post('/attendancechilla1', async (req, res) => {
+   const present = req.body.present;
+   const names = req.body.name;
+   const classes = req.body.class;
+   if (!Array.isArray(present)) {
+     return res.status(400).send('Invalid data format');
+   }
+   const date = new Date();
+   date.setHours(0, 0, 0, 0); 
+   for (let i = 0; i < present.length; i++) {
+     const existingAttendanceLocation = await AttendanceLocation.findOne({ studentId: present[i], date: date });
+     if (existingAttendanceLocation) {
+       console.log(`Attendance record already exists for student with ID1 ${present[i]} on ${date.toDateString()}`);
+     } else {
+       const attendancelocation = new AttendanceLocation({
+         studentId: present[i],
+         present: true,
+         place: 'Chilla',
+         name : names[i],
+         class : classes[i],
+         date: date
+       });
+       await attendancelocation.save();
+       console.log(`Attendance recorded for student with ID ${present[i]} on ${date.toDateString()}`);
+     }
+   }
+   res.redirect('chilladashboard');
+ });
+ // attendance chilla end
+
+
+
+  // attendance Navodaya
+//   const Student = require('./views/student.js');
+//  const Attendance = require('./views/attendance.js');
+//  const router = express.Router();
+const Attendance = require('./views/attendance.js');
 app.get('/attendancenavodaya', async (req, res) => {
     try {
       const students = await Student.find({ class: 'navodaya' });
@@ -239,8 +368,6 @@ app.get('/attendancenavodaya', async (req, res) => {
       res.status(500).send('Internal server error');
     }
   });
-  
-
   app.post('/attendance', async (req, res) => {
     const present = req.body.present;
     const names = req.body.name;
@@ -301,7 +428,7 @@ app.get('/attendance-sheetnavodaya', async (req, res) => {
       for (const attendance of attendanceData) {
         const { studentId, present,name } = attendance;
         
-        console.log(name);
+        // console.log(name);
         const date = attendance.date.toLocaleDateString('en-US');
   
         attendanceSheet.push({ name, date, present });

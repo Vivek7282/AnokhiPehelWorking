@@ -58,14 +58,15 @@
 
       <div class="section-header">
         <h2>Attendance Sheet</h2>
-        <p>"Navodaya"</p>
+        <p>"Chilla"</p>
       </div>
       
-      <form method="post" action="/attendance">
+      <form method="post" action="/attendancechilla1">
         <% for (let i = 0; i < students.length; i++) { %>
         <div>
           <input type="hidden" name="studentId" value="<%= students[i]._id %>">
           <input type="hidden" name="name" value="<%= students[i].name %>">
+          <input type="hidden" name="class" value="<%= students[i].class %>">
           <input type="checkbox" name="present" value="<%= students[i]._id %>">
           <label><%= students[i].name %></label>
         </div>
