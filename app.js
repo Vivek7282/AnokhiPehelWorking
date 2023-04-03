@@ -74,6 +74,7 @@ collection.find({}).toArray((err, data) => {
       console.error(err);
       return;
     }
+    console.log(data);
   });
 app.get('/cordinator', (req, res) => {
     collection.find({}).toArray((err, data) => {
@@ -225,45 +226,6 @@ const mentorLoginSchema = new mongoose.Schema({
 
 
 
-// chilla location cordinator login
-
-
-
-
-app.get("/chilladashboard", function(req, res){
-    res.render("chilladashboard");
-})
-
-
-const LocationcordiSchema = new mongoose.Schema({
-    name : String,
-    email: String,
-    password: String,
-  });
-  
-  const locationcordi = mongoose.model('Locationcordi', LocationcordiSchema);
-
-  app.post('/locationcordi', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-   console.log(email + password);
-    MentorLogin1.findOne({ email: email, password: password }, (err, mentor) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-      } else if (!mentor) {
-        res.status(401).send('Invalid Email or Password');
-      } else {
-        if(locationcordi.findOne({location : "Chilla"}))
-        res.redirect('/chilladashboard');
-      }
-    });
-  });
-  
-// login varification chilla end 
-
-
-
 
 
 
@@ -278,7 +240,7 @@ const AdminSchema = new mongoose.Schema({
     password: String,
   });
   
-  const admin = mongoose.model('Admin', LocationcordiSchema);
+  const admin = mongoose.model('Admin', AdminSchema);
 
   app.post('/adminlogin', (req, res) => {
     const email = req.body.email;
@@ -310,6 +272,8 @@ const AdminSchema = new mongoose.Schema({
 const Student = require('./views/student.js');
 const AttendanceLocation = require('./views/attendancelocation.js');
 const router = express.Router();
+// const students =  Student.find({ place: 'Chilla' });
+// console.log(students);
 
 app.get('/attendancechilla', async (req, res) => {
    try {
@@ -450,6 +414,82 @@ app.get('/attendance-sheetnavodaya', async (req, res) => {
 
 
 
+
+  // chilla location cordinator login
+
+
+
+
+app.get("/chilladashboard", function(req, res){
+    res.render("chilladashboard");
+})
+
+
+const LocationcordiSchema = new mongoose.Schema({
+    name : String,
+    email: String,
+    password: String,
+    location:String
+  });
+  
+  const Locationcordi = mongoose.model('Locationcordi', LocationcordiSchema);
+
+  app.post('/locationcordi', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+   console.log(email + password);
+    Locationcordi.findOne({ email: email, password: password }, (err, mentor) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else if (!mentor) {
+        res.status(401).send('Invalid Email or Password');
+      } else {
+        if(Locationcordi.findOne({location : "Chilla"}))
+        res.redirect('/chilladashboard');
+      }
+    });
+  });
+  
+// login varification chilla end 
+
+
+
+
+
+// add location coordinate addlocationcordi addlocationcordi1
+
+app.get("/addlocationcordi", function(req, res){
+    res.render("addlocationcordi");
+})
+
+app.post('/addlocationcordi1', async (req, res) => {
+    const email = req.body.email;
+    const name = req.body.name;
+    const password = req.body.password;
+    const location = req.body.location;
+    // console.log("hello") ;
+    // const Locationcordi = mongoose.model('Locationcordi', new mongoose.Schema({
+    //   name: String,
+    //   email: String,
+    //   password: String,
+    //   location: String,
+    // }, { collection: 'locationcordis' }));
+  
+    const locationcordi = new Locationcordi({
+      name: name,
+      email: email,
+      password: password,
+      location: location
+    });
+  
+    await locationcordi.save();
+    console.log(`Coordinator Added Successfully`);
+  
+    res.redirect('admindashboard');
+  });
+  
+  
 
 
 
