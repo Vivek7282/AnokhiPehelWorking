@@ -74,7 +74,7 @@ collection.find({}).toArray((err, data) => {
       console.error(err);
       return;
     }
-    console.log(data);
+    
   });
 app.get('/cordinator', (req, res) => {
     collection.find({}).toArray((err, data) => {
@@ -468,13 +468,7 @@ app.post('/addlocationcordi1', async (req, res) => {
     const name = req.body.name;
     const password = req.body.password;
     const location = req.body.location;
-    // console.log("hello") ;
-    // const Locationcordi = mongoose.model('Locationcordi', new mongoose.Schema({
-    //   name: String,
-    //   email: String,
-    //   password: String,
-    //   location: String,
-    // }, { collection: 'locationcordis' }));
+    
   
     const locationcordi = new Locationcordi({
       name: name,
@@ -488,10 +482,81 @@ app.post('/addlocationcordi1', async (req, res) => {
   
     res.redirect('admindashboard');
   });
-  
+ 
   
 
 
+  // add class coordinator 
+
+app.get("/addclasscordi", function(req, res){
+    res.render("addclasscordi");
+})
+const ClasscordiSchema = new mongoose.Schema({
+    name : String,
+    email: String,
+    password: String,
+    class:String
+  });
+  
+  const Classcordi = mongoose.model('Classcordi', ClasscordiSchema);
+
+app.post('/addclasscordi1', async (req, res) => {
+    const email = req.body.email;
+    const name = req.body.name;
+    const password = req.body.password;
+    const class1 = req.body.class;
+    
+  
+    const classcordi = new Classcordi({
+      name: name,
+      email: email,
+      password: password,
+      class: class1
+    });
+  
+    await classcordi.save();
+    console.log(`Coordinator Added Successfully`);
+  
+    res.redirect('admindashboard');
+  });
+//   addmentor1
+
+
+
+//mentor schedule
+
+
+app.get("/addmentor", function(req, res){
+    res.render("addmentor");
+})
+const MentorschSchema = new mongoose.Schema({
+    name : String,
+    day : String,
+    class:String,
+    subject : String
+  });
+  
+  const Mentorsch = mongoose.model('Mentorsch', MentorschSchema);
+
+app.post('/addmentor1', async (req, res) => {
+    const name = req.body.name;
+    const day = req.body.day;
+    const class1 = req.body.class;
+    const subject = req.body.subject;
+    
+  
+    const mentorsch = new Mentorsch({
+      name: name,
+      day: day,
+      subject: subject,
+      class: class1
+    });
+  
+    await mentorsch.save();
+    console.log(`Mentor Added Successfully`);
+  
+    res.redirect('admindashboard');
+  });
 
 
 
