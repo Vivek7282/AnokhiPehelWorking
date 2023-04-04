@@ -560,6 +560,21 @@ app.post('/addmentor1', async (req, res) => {
 
 
 
+//to fetch schedule schedule
+app.get("/schedule", function(req, res){
+    res.render("schedule");
+})
+
+// for  fetching class wise schedule
+
+app.get('/dayschedule', async (req, res) => {
+  
+    
+  });
+
+  
+  //class wise schedule fetching end
+
 
 
 
