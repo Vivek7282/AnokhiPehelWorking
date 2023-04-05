@@ -43,17 +43,6 @@ app.get("/location", function(req, res){
 })
 
 
-
-
-
-
-
-// app.get("/cordinator", function(req, res){
-//     res.render("cordinator");
-// })
-
-
-
 // to fetch class cordinator
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb://localhost:27017/Anokhi_Pehel_Working';
@@ -568,12 +557,52 @@ app.get("/schedule", function(req, res){
 // for  fetching class wise schedule
 
 app.get('/dayschedule', async (req, res) => {
-  
     
+    const Schedule = mongoose.model('Schedule', MentorschSchema, 'mentorsches');
+  
+   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const now = new Date();
+  const dayOfWeek = daysOfWeek[now.getDay()]; 
+  const schedules = await Schedule.find({day: dayOfWeek });
+  console.log(schedules);
+  res.render('dayschedule1', { schedules });
   });
 
   
   //class wise schedule fetching end
+
+
+
+
+//to fetch schedule schedule classwise
+
+// for  fetching class wise schedule 
+
+app.get('/classschedule', async (req, res) => {
+    
+    const Schedule = mongoose.model('Schedule', MentorschSchema, 'mentorsches');
+  
+    const class1 = 'Navodaya';
+  const schedules = await Schedule.find({class : class1 });
+  console.log(schedules);
+  res.render('dayschedule2', { schedules });
+  });
+
+  
+  //class wise schedule fetching end
+
+  // whole schedule 
+
+  app.get('/classschedulewhole', async (req, res) => {
+    
+    const Schedule = mongoose.model('Schedule', MentorschSchema, 'mentorsches');
+  
+    // const class1 = 'Navodaya';
+  const schedules = await Schedule.find();
+  console.log(schedules);
+  res.render('dayschedule2', { schedules });
+  });
+
 
 
 
