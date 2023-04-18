@@ -180,38 +180,15 @@ app.get("/classcordi", function(req, res){
 
 
 //login varification navodaya 
-app.get("/navodayamentor", function(req, res){
-    res.render("navodayamentor");
+app.get("/mentorLogintoclass/navodayamentor", function(req, res){
+    res.render("mentorLogintoclass/navodayamentor");
 })
 
+const MentorLogin1 = require('./models/mentorlogin');
+const mentor = require('./routes/mentor');
+app.use('/', mentor);
+  
 
-const mentorLoginSchema = new mongoose.Schema({
-    name : String,
-    email: String,
-    password: String,
-    class : String
-  });
-  
-  const MentorLogin1 = mongoose.model('MentorLogin1', mentorLoginSchema);
-  
-  app.post('/mentorLogin', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-   console.log(email + password);
-    MentorLogin1.findOne({ email: email, password: password }, (err, mentor) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-      } else if (!mentor) {
-        res.status(401).send('Invalid Email or Password');
-      } else {
-        if(MentorLogin1.findOne({class : "navodaya"}))
-        res.redirect('/navodayamentor');
-      }
-    });
-  });
-  
-// login varification end navodaya
 
 
 
@@ -575,6 +552,22 @@ app.get('/dayschedule', async (req, res) => {
 
 
 //to fetch schedule schedule classwise
+
+
+
+// app.post('/showResult', async (req, res) => {
+//     const student = [];
+//   const mark = [];
+//     const clas = req.body.class;
+//     const dat = req.body.date;
+  
+//     try {
+//       const result = await Result.find({ class: clas, date: dat });
+  
+//       result.forEach(function (value) {
+//         student.push(value.name);
+//         mark.push(value.marks);
+//       });
 
 // for  fetching class wise schedule 
 
