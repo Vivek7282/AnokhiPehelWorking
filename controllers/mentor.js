@@ -11,8 +11,11 @@ exports.mentorLogin = (req, res) => {
     } else if (!mentor) {
       res.status(401).send('Invalid Email or Password');
     } else {
-      if(MentorLogin1.findOne({class : "navodaya"}))
+      if (mentor.class === "Pre1") {
+        res.redirect('/mentorLogintoclass/pre1mentor');
+      } else if (mentor.class === "Navodaya") {
         res.redirect('/mentorLogintoclass/navodayamentor');
+      } 
     }
   });
 };

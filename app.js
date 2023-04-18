@@ -92,16 +92,33 @@ collection1.find({}).toArray((err, data) => {
       return;
     }
 });
-  app.get('/studentsnavodaya', (req, res) => {
-    collection1.find({}).toArray((err, data) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        res.render('student', { data, class: 'navodaya' });
+//   app.get('/studentsnavodaya', (req, res) => {
+//     collection1.find({}).toArray((err, data) => {
+//         if (err) {
+//           console.error(err);
+//           return;
+//         }
+//         res.render('student', { data, class: 'navodaya' });
 
-      });
+//       });
+//     });
+
+app.get('/students', (req, res) => {
+    const className = req.query.class;
+    if (!className) {
+      // handle the case where the class name is not provided
+      res.status(400).send('Class name not provided');
+      return;
+    }
+    collection1.find({ class: className }).toArray((err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+      res.render('student', { data, className: className });
     });
+  });
 
 
 
@@ -182,6 +199,9 @@ app.get("/classcordi", function(req, res){
 //login varification navodaya 
 app.get("/mentorLogintoclass/navodayamentor", function(req, res){
     res.render("mentorLogintoclass/navodayamentor");
+})
+app.get("/mentorLogintoclass/pre1mentor", function(req, res){
+    res.render("mentorLogintoclass/pre1mentor");
 })
 
 const MentorLogin1 = require('./models/mentorlogin');
@@ -486,6 +506,43 @@ app.post('/addclasscordi1', async (req, res) => {
     res.redirect('admindashboard');
   });
 //   addmentor1
+
+
+//add mentor for login
+app.get("/addmentorlogin1", function(req, res){
+    res.render("addmentorlogin1");
+})
+
+app.post('/addmentorlogin1', async (req, res) => {
+    const name = req.body.name;
+    const email = req.body.email;
+    const class1 = req.body.class;
+    const password = req.body.password;
+    
+  
+    const mentorloginsch = new MentorLogin1({
+      name: name,
+      email:email,
+      password: password,
+      class: class1
+    });
+  
+    await mentorloginsch.save();
+    console.log(`Mentor login Added Successfully`);
+  
+    res.redirect('admindashboard');
+  });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
