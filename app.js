@@ -26,6 +26,7 @@ app.get("/", function(req, res){
 app.get("/student", function(req, res){
     res.render("student");
 })
+
 app.get("/mentors", function(req, res){
     res.render("mentors");
 })
@@ -83,7 +84,7 @@ app.get('/cordinator', (req, res) => {
 
 
 
-// to get all students of navodaya
+// to get all students of any class
 
 const collection1 = db.collection('student');
 collection1.find({}).toArray((err, data) => {
@@ -92,16 +93,6 @@ collection1.find({}).toArray((err, data) => {
       return;
     }
 });
-//   app.get('/studentsnavodaya', (req, res) => {
-//     collection1.find({}).toArray((err, data) => {
-//         if (err) {
-//           console.error(err);
-//           return;
-//         }
-//         res.render('student', { data, class: 'navodaya' });
-
-//       });
-//     });
 
 app.get('/students', (req, res) => {
     const className = req.query.class;
@@ -119,6 +110,22 @@ app.get('/students', (req, res) => {
       res.render('student', { data, className: className });
     });
   });
+
+
+  //attedance list
+  app.get('/attendance', async (req, res) => {
+    
+      const className = req.query.class; // extract the class name from the query string parameter
+      collection1.find({ class: className }).toArray((err, data) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Internal Server Error');
+          return;
+        }
+        res.render('attendance', { data, className: className });
+      });
+  });
+  
 
 
 
@@ -255,7 +262,7 @@ const AdminSchema = new mongoose.Schema({
 
 
 // attendance Navodaya
-const Student = require('./views/student.js');
+const Student = require('./models/student.js');
 const AttendanceLocation = require('./views/attendancelocation.js');
 const router = express.Router();
 // const students =  Student.find({ place: 'Chilla' });
@@ -304,23 +311,17 @@ app.get('/attendancechilla', async (req, res) => {
 
 
 
-  // attendance Navodaya
-//   const Student = require('./views/student.js');
-//  const Attendance = require('./views/attendance.js');
-//  const router = express.Router();
-const Attendance = require('./views/attendance.js');
-app.get('/attendancenavodaya', async (req, res) => {
-    try {
-      const students = await Student.find({ class: 'navodaya' });
-      res.render('attendancenavodaya', { students });
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Internal server error');
-    }
-  });
-  app.post('/attendance', async (req, res) => {
+ // Attendance for all the class
+ const Attendance = require('./models/attendance.js');
+const attendanceRoutes = require('./routes/attendance');
+app.use('/', attendanceRoutes);
+
+  
+  app.post('/attendance1/:class', async (req, res) => {
+    const className = req.params.class;
     const present = req.body.present;
     const names = req.body.name;
+    console.log(names);
     if (!Array.isArray(present)) {
       return res.status(400).send('Invalid data format');
     }
@@ -334,7 +335,7 @@ app.get('/attendancenavodaya', async (req, res) => {
         const attendance = new Attendance({
           studentId: present[i],
           present: true,
-          class: 'navodaya',
+          class: className,
           name : names[i],
           date: date
         });
@@ -342,10 +343,9 @@ app.get('/attendancenavodaya', async (req, res) => {
         console.log(`Attendance recorded for student with ID ${present[i]} on ${date.toDateString()}`);
       }
     }
-    res.redirect('navodayamentor');
+    res.redirect(`/mentorLogintoclass/${className}mentor`);
   });
-  
-  
+   
 // attendance navodaya end
 
 

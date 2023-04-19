@@ -54,40 +54,26 @@
 </style>
 <!-- ======= Team Section ======= -->
 <section id="team" class="team">
-    <div class="container" data-aos="fade-up">
-
-      <div class="section-header">
-        <h2>Attendance Sheet</h2>
-        <p>"Navodaya"</p>
-      </div>
-      
-      <form method="post" action="/attendance">
-        <% for (let i = 0; i < students.length; i++) { %>
-        <div>
-          <input type="hidden" name="studentId" value="<%= students[i]._id %>">
-          <input type="hidden" name="name" value="<%= students[i].name %>">
-          <input type="checkbox" name="present" value="<%= students[i]._id %>">
-          <label><%= students[i].name %></label>
-        </div>
-        <% } %>
-        <button type="submit">Submit</button>
-      </form>
-      
-      
-      
-
-
-
-
-
-      
-
-        
-        
-      </div>
-
+  <div class="container" data-aos="fade-up">
+    <div class="section-header">
+      <h2>Attendance Sheet</h2>
+      <p><%= className %></p>
     </div>
-  </section><!-- End Team Section -->
+    <form method="post" action="/attendance1/<%= className %>">
+
+      <% for (let i = 0; i < data.length; i++) { %>
+      <div>
+        <input type="hidden" name="studentId" value="<%= data[i]._id %>">
+        <input type="hidden" name="name" value="<%= data[i].name %>">
+        <input type="checkbox" name="present" value="<%= data[i]._id %>">
+        <label><%= data[i].name %></label>
+      </div>
+      <% } %>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</section><!-- End Team Section -->
+
 
 
 
